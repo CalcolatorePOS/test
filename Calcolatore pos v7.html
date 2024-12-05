@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolatore Commissioni POS</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            background-color: white;
+            border: 1px solid #dcdcdc;
+            border-radius: 12px;
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 30px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .logo {
+            width: 150px;
+            display: block;
+            margin: 0 auto 20px auto;
+        }
+
+        h2 {
+            color: #2A2A2A;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .form-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .form-table th, .form-table td {
+            border: 1px solid #e0e0e0;
+            padding: 15px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .form-table th {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        .form-table input {
+            width: 90%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            text-align: center;
+        }
+
+        button {
+            background-color: #28a745;
+            color: white;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 18px;
+            margin-top: 20px;
+            display: block;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .result {
+            font-weight: bold;
+            color: #00d370;
+            font-size: 18px;
+            margin-top: 10px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 14px;
+            color: #777;
+            text-align: center;
+        }
+
+        .row-header {
+            font-weight: bold;
+            background-color: #f1f1f1;
+            text-align: center;
+        }
+
+        .form-table .centered-header {
+            text-align: center;
+            background-color: #f1f1f1;
+            font-weight: bold;
+            font-size: 18px;
+            padding: 10px 0;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Logo -->
+    <img src="https://cdn.prod.website-files.com/652ba4d84e7b1ba97dd3e42c/652ba8b2e4e95fb82f63d777_LOGO.svg" alt="Qomodo Logo" class="logo">
+
+    <h2>Calcolatore Commissioni POS</h2>
+
+    <!-- Form layout with one header row centered -->
+    <table class="form-table">
+        <tr>
+            <th>Carte Personali</th>
+            <th>Bancomat</th>
+        </tr>
+        
+        <!-- Row header: Inserire transato annuale -->
+        <tr>
+            <td colspan="2" class="centered-header">Transato Annuale</td>
+        </tr>
+        <tr>
+            <td><input type="number" id="col1_num" placeholder="Inserire transato annuale"></td>
+            <td><input type="number" id="col2_num" placeholder="Inserire transato annuale"></td>
+        </tr>
+        
+        <!-- Row header: Inserire commissione attuale -->
+        <tr>
+            <td colspan="2" class="centered-header">Commissione Attuale %</td>
+        </tr>
+        <tr>
+            <td><input type="number" id="col1_percent_1" placeholder="Commissione Attuale %"></td>
+            <td><input type="number" id="col2_percent_1" placeholder="Commissione Attuale %"></td>
+        </tr>
+        
+        <!-- Row header: Inserire commissione Qomodo -->
+        <tr>
+            <td colspan="2" class="centered-header">Commissione Qomodo %</td>
+        </tr>
+        <tr>
+            <td><input type="number" id="col1_percent_2" placeholder="Commissione Qomodo %"></td>
+            <td><input type="number" id="col2_percent_2" placeholder="Commissione Qomodo %"></td>
+        </tr>
+
+        <!-- Row header: Costo commissioni attuale -->
+        <tr>
+            <td colspan="2" class="centered-header">Costo Commissioni Attuale</td>
+        </tr>
+        <tr>
+            <td id="col1_mult_perc_2">€0.00</td>
+            <td id="col2_mult_perc_2">€0.00</td>
+        </tr>
+        
+        <!-- Row header: Costo commissioni Qomodo -->
+        <tr>
+            <td colspan="2" class="centered-header">Costo Commissioni Qomodo</td>
+        </tr>
+        <tr>
+            <td id="col1_mult_perc_1">€0.00</td>
+            <td id="col2_mult_perc_1">€0.00</td>
+        </tr>
+        
+        <!-- Row header: Risparmio totale -->
+        <tr>
+            <td colspan="2" class="centered-header">Risparmio Totale</td>
+        </tr>
+        <tr class="result">
+            <td id="col1_final">€0.00</td>
+            <td id="col2_final">€0.00</td>
+        </tr>
+    </table>
+
+    <!-- Button to trigger calculation -->
+    <button type="button" onclick="calculate()">Calcola</button>
+</div>
+
+<script>
+    function calculate() {
+        // Get the inputs for Personal Cards and Bancomat
+        let col1_num = parseFloat(document.getElementById('col1_num').value);
+        let col2_num = parseFloat(document.getElementById('col2_num').value);
+        let col1_percent_1 = parseFloat(document.getElementById('col1_percent_1').value) / 100;
+        let col2_percent_1 = parseFloat(document.getElementById('col2_percent_1').value) / 100;
+        let col1_percent_2 = parseFloat(document.getElementById('col1_percent_2').value) / 100;
+        let col2_percent_2 = parseFloat(document.getElementById('col2_percent_2').value) / 100;
+
+        // Calculate results for both percentages
+        let col1_mult_perc_2 = col1_num * col1_percent_1;
+        let col2_mult_perc_2 = col2_num * col2_percent_1;
+
+        let col1_mult_perc_1 = col1_num * col1_percent_2;
+        let col2_mult_perc_1 = col2_num * col2_percent_2;
+
+        // Final results (difference between percentages)
+        let col1_final = col1_mult_perc_2 - col1_mult_perc_1;
+        let col2_final = col2_mult_perc_2 - col2_mult_perc_1;
+
+        // Calculate percentage reduction for Personal Cards
+        let col1_percent_reduction = ((col1_mult_perc_2 - col1_mult_perc_1) / col1_mult_perc_2) * 100;
+        // Calculate percentage reduction for Bancomat
+        let col2_percent_reduction = ((col2_mult_perc_2 - col2_mult_perc_1) / col2_mult_perc_2) * 100;
+
+        // Display the results in the table with € symbol and percentage reduction
+        document.getElementById('col1_mult_perc_2').innerText = '€' + col1_mult_perc_2.toFixed(2);
+        document.getElementById('col2_mult_perc_2').innerText = '€' + col2_mult_perc_2.toFixed(2);
+        document.getElementById('col1_mult_perc_1').innerText = '€' + col1_mult_perc_1.toFixed(2);
+        document.getElementById('col2_mult_perc_1').innerText = '€' + col2_mult_perc_1.toFixed(2);
+
+        // Display final savings along with percentage reduction
+        document.getElementById('col1_final').innerText = '€' + col1_final.toFixed(2) + ' (risparmio ' + col1_percent_reduction.toFixed(2) + '%)';
+        document.getElementById('col2_final').innerText = '€' + col2_final.toFixed(2) + ' (risparmio ' + col2_percent_reduction.toFixed(2) + '%)';
+    }
+</script>
+
+</body>
+</html>
